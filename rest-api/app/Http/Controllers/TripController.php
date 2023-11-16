@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\TripAccepted;
 use App\Models\Trip;
 use Illuminate\Http\Request;
 
@@ -34,5 +35,45 @@ class TripController extends Controller
         }
 
         return response()->json(['message' => 'Cannot Find This Trip'], 404);
+    }
+
+    public function accept(Request $request, Trip $trip){
+
+        $request->validate([
+            'driver_location' => 'required'
+        ]);
+         $trip->update([
+            'driver_id' => $request->user()->id,
+            'driver_location' => $request->driver_location
+         ]);
+         $trip->load('driver.user');
+         TripAccepted::dispatch($trip, $request->user());
+         return $trip;
+    }
+    public function start(Request $request, Trip $trip){
+        $trip->update([
+            'is_started' => true,
+        ]);
+
+        $trip->load('driver_user');
+        return $trip;
+    }
+    public function end(Request $request, Trip $trip){
+        $trip->update([
+            'is_complete' => true,
+        ]);
+
+        $trip->load('driver_user');
+        return $trip;
+    }
+    public function location(Request $request, Trip $trip){
+        $request->validate([
+            'driver_location' => 'required'
+        ]);
+        $trip->update([
+            'driver_location' => $request->driver_location
+        ]);
+        $trip->load('driver.user');
+        return $trip;
     }
 }
