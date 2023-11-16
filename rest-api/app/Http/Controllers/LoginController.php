@@ -26,6 +26,22 @@ class LoginController extends Controller{
     }
 
     public function verify(Request $request){
-        
+        $request->validate([
+            'phone' => 'required|numeric|min:10',
+            'login_code' => 'required|numeric|between:1111111,999999'
+        ]);
+
+        $user = User::where('phone', $request->phone)
+        ->where('login_code', $request->login_code)
+        ->first();
+
+        if($user){
+            $user->update([
+                'login_code' => null
+            ]);
+            return $user->createToken($request->login_code)->plainTextToken;
+        }
+
+        return response()->json(['message'=> 'Invalid verification code'],401);
     }
 }
