@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\LoginNeedsVerification;
 use Illuminate\Http\Request;
 
 class LoginController extends Controller{
@@ -20,6 +21,11 @@ class LoginController extends Controller{
 
         }
 
-        $user->notify();
+        $user->notify(new LoginNeedsVerification());
+        return response()->json(['message'=> 'Text message notification sent.']);
+    }
+
+    public function verify(Request $request){
+        
     }
 }

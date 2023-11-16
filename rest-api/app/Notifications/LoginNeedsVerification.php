@@ -36,6 +36,9 @@ class LoginNeedsVerification extends Notification
 
     public function toTwillio($notifiable){
         $loginCode = rand(11111,99999);
+       $notifiable->update([
+        'login_code' => $loginCode
+       ]);
         return (new TwilioSmsMessage())->content("Your Login Code Is {$loginCode}, don't share to anyone");
     }
     /**

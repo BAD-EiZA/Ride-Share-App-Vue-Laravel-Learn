@@ -33,6 +33,10 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function routeNOtificationForTwillio(){
+        return $this->phone;
+    }
+
     public function driver() {
         return $this->hasOne(Driver::class);
     }
